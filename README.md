@@ -1,0 +1,1 @@
+A simple and beginner-friendly Java Inventory Management System that lets users add, view, update, delete, and search products. This project was created for an academic assignment to demonstrate Java programming, OOP concepts, and basic CRUD operations.
