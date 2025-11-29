@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-
 // ================= PRODUCT CLASS =================
 class Product {
     //attributes 
@@ -119,7 +118,7 @@ class InventoryManager{
     }
 
     // Updates a product's name, price, or quantity
-    public void updateProduct(int productId,int choice,String newName,double newPrice,int newQuantity){
+    public boolean updateProduct(int productId,int choice,String newName,double newPrice,int newQuantity){
         boolean found = false;
         for (int i = 0; i < count; i++){
             if (productsArr[i].getProductId() == productId){
@@ -138,16 +137,17 @@ class InventoryManager{
                         System.out.println("Quantity updated successfully");
                         break;
                 }
-                break;
+                return true;  // return true if product found and updated
             }
         } 
         if (!found){
             System.out.println("product ID not found.");
         }
+        return false; // return false if product not found
     }
 
     // Deletes a product by ID
-    public void deleteProduct(int productId){
+    public boolean deleteProduct(int productId){
         boolean found = false;
         for (int i = 0; i < count; i++){
             if (productsArr[i].getProductId() == productId){
@@ -160,11 +160,13 @@ class InventoryManager{
                 i--;  // reason why i--
                       //When you shift the array left the next element moves into the same index.
                 System.out.println("Product deleted successfully.");
+                return true; // return true if deleted
             }
         }
         if (!found){
             System.out.println("Product ID not found.");
         }
+        return false; // return false if not found
     }
 
     // Sorts the products array by product ID in ascending order (bubble sort)
@@ -335,6 +337,7 @@ class InputHelper{
 
 
 
+
          // ---------------- BUTTON SECTION (CENTERED) ----------------
          // Panel that holds the buttons
          JPanel buttonPanel = new JPanel();
@@ -360,6 +363,7 @@ class InputHelper{
          gbc.weighty = 0.3;
          frame.add(buttonPanel, gbc);
  
+
 
 
 
@@ -391,7 +395,6 @@ class InputHelper{
              }
          });
  
-
 
 
 
@@ -427,7 +430,6 @@ class InputHelper{
 
 
 
-
          // UPDATE PRODUCT
          updateBtn.addActionListener(e -> {
              try {
@@ -436,21 +438,28 @@ class InputHelper{
                  int op = JOptionPane.showOptionDialog(frame, "Choose what you want to update:", "Update",
                          JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[0]);
  
+                 boolean success = false;
+
                  switch (op) {
                      case 0:
                          String newName = JOptionPane.showInputDialog(frame, "Enter new name:");
-                         store.updateProduct(id, 1, newName, 0, 0);
+                         success = store.updateProduct(id, 1, newName, 0, 0);
                          break;
                      case 1:
                          double newPrice = Double.parseDouble(JOptionPane.showInputDialog(frame, "Enter new price:"));
-                         store.updateProduct(id, 2, null, newPrice, 0);
+                         success = store.updateProduct(id, 2, null, newPrice, 0);
                          break;
                      case 2:
                          int newQty = Integer.parseInt(JOptionPane.showInputDialog(frame, "Enter new quantity:"));
-                         store.updateProduct(id, 3, null, 0, newQty);
+                         success = store.updateProduct(id, 3, null, 0, newQty);
                          break;
                  }
-                 displayArea.setText("Update completed.");
+
+                 if (success)
+                     displayArea.setText("Product updated successfully.");
+                 else
+                     displayArea.setText("Product ID not found.");
+
              } catch (Exception ex) {
                  JOptionPane.showMessageDialog(frame, "Something went wrong.");
              }
@@ -461,8 +470,11 @@ class InputHelper{
          deleteBtn.addActionListener(e -> {
              try {
                  int id = Integer.parseInt(JOptionPane.showInputDialog(frame, "Enter ID to delete:"));
-                 store.deleteProduct(id);
-                 displayArea.setText("Product Deleted successfully.");
+                 boolean success = store.deleteProduct(id);
+                 if (success)
+                     displayArea.setText("Product deleted successfully.");
+                 else
+                     displayArea.setText("Product ID not found.");
              } catch (Exception ex) {
                  JOptionPane.showMessageDialog(frame, "Invalid ID.");
              }
@@ -482,13 +494,13 @@ class InputHelper{
                  JOptionPane.showMessageDialog(frame, "Invalid input.");
              }
          });
- 
 
 
-         // finally show the frame
+
+         // finally show the framee
          frame.setVisible(true);
      }
- 
+
 
 
      
@@ -513,4 +525,3 @@ class InputHelper{
          SwingUtilities.invokeLater(() -> new Main(manager));
      }
  }
- 
